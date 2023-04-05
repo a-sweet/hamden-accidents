@@ -7,7 +7,7 @@ st.title('Auto Accidents in Hamden, CT')
 st.markdown('---')
 
 #Prevents loading the file every time the user interacts with widgets
-@st.cache_data
+@st.cache
 def load_data():
     df = pd.read_csv('crashes_cleaned2.csv', parse_dates=['full_date'])
     indexed_df = df.set_index('full_date')
