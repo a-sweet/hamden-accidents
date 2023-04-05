@@ -7,17 +7,17 @@ st.title('Auto Accidents in Hamden, CT')
 st.markdown('---')
 
 #Prevents loading the file every time the user interacts with widgets
-@st.cache
+@st.cache_data
 def load_data():
     df = pd.read_csv('crashes_cleaned2.csv', parse_dates=['full_date'])
-    #df.set_index('Date Of Crash')
-    return df
+    indexed_df = df.set_index('full_date')
+    return indexed_df
 
 #load the dataset, parsing the date & time column as a date object
 crashes = load_data()
 
 #set the date & time column as the index
-crashes.set_index('full_date', inplace=True)
+#crashes.set_index('full_date', inplace=True)
 
 #create the date range input slider
 st.subheader('Dates')
