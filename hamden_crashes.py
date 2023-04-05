@@ -2,15 +2,6 @@ import pandas as pd
 import streamlit as st
 import datetime
 
-df = pd.read_csv('/Users/asweet/Desktop/Hamden Crash Data/crashes_cleaned.csv')
-
-#print(df.head())
-
-#things to choose: 
-# date range
-# severity of accident
-# weather conditions
-
 st.title('Auto Accidents in Hamden, CT')
 
 st.markdown('---')
