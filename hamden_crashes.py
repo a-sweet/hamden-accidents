@@ -91,3 +91,47 @@ st.markdown('---')
 #add the map last, so it is the last element of the page
 st.subheader('Map')
 st.map(crashes)
+
+st.markdown('---')
+
+st.subheader('Streets and Accidents Table')
+
+#count accidents for each street name
+street_list = crashes['Road Description'].unique()
+
+av_d_trf_df = pd.DataFrame()
+d_trf_list = []
+av_trf_dict = {}
+
+for street in street_list:
+  av_d_trf = crashes.loc[crashes['Road Description'] == street, ['Average Daily Traffic']].mean()[0]
+  #print(f'Street: {street}, Av. Traffic: {av_d_trf}')
+  #add to a dictionary with street name and calculated mean daily traffic unless trf is NaN 
+  if math.isnan(av_d_trf) == False:
+    av_trf_dict[street] = av_d_trf
+
+#count accidents, make a sorted dataframe
+dangerous_streets = crashes.groupby(['Road Description'])['Road Description'].count().to_frame()
+
+#drop the extra index name from groupby
+dangerous_streets.index.name = None
+
+#rename the column to reflect its actual data
+dangerous_streets.rename(columns = {'Road Description':'Number of Accidents'}, inplace=True)
+
+#add a new column to the dataframe with values from the dictionary (df index and dict keys are both street names)
+dangerous_streets['Average Daily Traffic'] = dangerous_streets.index.map(av_trf_dict)
+
+dangerous_streets['Accidents per 1000 Daily Vehicles'] = dangerous_streets['Number of Accidents'] / (dangerous_streets['Average Daily Traffic'] / 1000)
+
+sorter = 'Number of Accidents'
+
+sorter = st.radio('Sort by', ('Number of Accidents', 'Average Daily Traffic', 'Accidents per 1000 Daily Vehicles'))
+
+dangerous_streets.sort_values(by=sorter, ascending=False, inplace=True)
+
+st.dataframe(dangerous_streets, width = 800, height = 200)
+
+st.write("*Average Daily Traffic values of 'None' mean there is no data for that street")
+
+
