@@ -111,14 +111,17 @@ for street in street_list:
   if math.isnan(av_d_trf) == False:
     av_trf_dict[street] = av_d_trf
 
-#count accidents, make a sorted dataframe
-dangerous_streets = crashes.groupby(['Road Description'])['Road Description'].count().to_frame()
+#count accidents, make a dataframe
+dangerous_streets = crashes.groupby(['Road Description','Route Class Text Format'])['Road Description'].count().to_frame()
 
-#drop the extra index name from groupby
+#convert the extra index from groupby to a column
+dangerous_streets.reset_index(level='Route Class Text Format', inplace=True)
+
+#remove the name label from the index
 dangerous_streets.index.name = None
 
-#rename the column to reflect its actual data
-dangerous_streets.rename(columns = {'Road Description':'Number of Accidents'}, inplace=True)
+#rename the columns to reflect their actual data: 
+dangerous_streets.rename(columns = {'Road Description':'Number of Accidents','Route Class Text Format':'Road Type'}, inplace=True)
 
 #add a new column to the dataframe with values from the dictionary (df index and dict keys are both street names)
 dangerous_streets['Average Daily Traffic'] = dangerous_streets.index.map(av_trf_dict)
