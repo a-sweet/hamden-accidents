@@ -5,20 +5,19 @@ import math
 
 st.title('Auto Accidents in Hamden, CT')
 
+st.markdown('Data obtained from [Connecticut Crash Data Repository](https://www.ctcrash.uconn.edu).')
+
 st.markdown('---')
 
 #Prevents loading the file every time the user interacts with widgets
 @st.cache
 def load_data():
-    df = pd.read_csv('crashes_cleaned2.csv', parse_dates=['full_date'])
+    df = pd.read_csv('https://raw.githubusercontent.com/a-sweet/hamden-accidents/5cefbb6fde13bb80043a89c90883bb6ab604fac1/crashes_cleaned2.csv', parse_dates=['full_date'])
     indexed_df = df.set_index('full_date')
     return indexed_df
 
 #load the dataset, parsing the date & time column as a date object
 crashes = load_data()
-
-#set the date & time column as the index
-#crashes.set_index('full_date', inplace=True)
 
 #create the date range input slider
 st.subheader('Dates')
@@ -105,6 +104,7 @@ d_trf_list = []
 av_trf_dict = {}
 
 for street in street_list:
+  #calculate the mean of the daily traffic values, since it changes over time
   av_d_trf = crashes.loc[crashes['Road Description'] == street, ['Average Daily Traffic']].mean()[0]
   #print(f'Street: {street}, Av. Traffic: {av_d_trf}')
   #add to a dictionary with street name and calculated mean daily traffic unless trf is NaN 
@@ -125,8 +125,9 @@ dangerous_streets.rename(columns = {'Road Description':'Number of Accidents','Ro
 
 #add a new column to the dataframe with values from the dictionary (df index and dict keys are both street names)
 dangerous_streets['Average Daily Traffic'] = dangerous_streets.index.map(av_trf_dict)
+dangerous_streets['Average Daily Traffic'] = round(dangerous_streets['Average Daily Traffic'], 2)
 
-dangerous_streets['Accidents per 1000 Daily Vehicles'] = dangerous_streets['Number of Accidents'] / (dangerous_streets['Average Daily Traffic'] / 1000)
+dangerous_streets['Accidents per 1000 Daily Vehicles'] = round(dangerous_streets['Number of Accidents'] / (dangerous_streets['Average Daily Traffic'] / 1000), 2)
 
 sorter = 'Number of Accidents'
 
@@ -136,6 +137,4 @@ dangerous_streets.sort_values(by=sorter, ascending=False, inplace=True)
 
 st.dataframe(dangerous_streets, width = 800, height = 200)
 
-st.write("*Average Daily Traffic values of 'None' mean there is no data for that road in the chosen date range")
-
-
+st.write("*Average Daily Traffic values of 'None' or '<NA>' mean there is no data for that street in the chosen date range.")
