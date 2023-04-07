@@ -136,6 +136,6 @@ dangerous_streets.sort_values(by=sorter, ascending=False, inplace=True)
 
 st.dataframe(dangerous_streets, width = 800, height = 200)
 
-st.write("*Average Daily Traffic values of 'None' mean there is no data for that street")
+st.write("*Average Daily Traffic values of 'None' mean there is no data for that road in the chosen date range")
 
 
