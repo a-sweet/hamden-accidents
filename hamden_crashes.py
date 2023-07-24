@@ -15,8 +15,9 @@ st.markdown('---')
 #Prevents loading the file every time the user interacts with widgets
 @st.cache_data
 def load_data():
-    # df = pd.read_csv('https://raw.githubusercontent.com/a-sweet/hamden-accidents/5cefbb6fde13bb80043a89c90883bb6ab604fac1/crashes_cleaned2.csv', parse_dates=['full_date'])
-    df = pd.read_csv('crashes_cleaned2.csv', parse_dates=['full_date','Date Of Crash'])
+    df = pd.read_csv('https://raw.githubusercontent.com/a-sweet/hamden-accidents/main/crashes_cleaned2.csv', 
+                     parse_dates=['full_date','Date Of Crash'])
+    #df = pd.read_csv('crashes_cleaned2.csv', parse_dates=['full_date','Date Of Crash'])
     indexed_df = df.set_index('full_date')
     sorted_df = indexed_df.sort_index()
     sorted_df.drop(columns=['Unnamed: 0','Light Condition','Road Surface Condition','Type of Intersection'], inplace=True)
@@ -191,11 +192,11 @@ hourly_crashes = crashes.groupby(['Hour of the Day'])['Hour of the Day'].count()
 fig = plt.figure(figsize=(10, 4))
 ax = fig.add_subplot()
 
-ax.plot(hourly_crashes.index, hourly_crashes['Hour of the Day'])
+ax.bar(hourly_crashes.index, hourly_crashes['Hour of the Day'])
 ax.set_title(f'Hourly Auto Accidents in Hamden, {d_range[0].strftime("%m/%d/%Y")}-{d_range[1].strftime("%m/%d/%Y")}')
 ax.set_xlabel('Hour')
 ax.set_ylabel('Total accidents')
-ax.set_xlim(min(hourly_crashes.index), max(hourly_crashes.index))
+ax.set_xlim(min(hourly_crashes.index)-.6, max(hourly_crashes.index)+.6)
 
 ax.set_xticks(range(0, 24),['12am','1am','2am','3am','4am','5am','6am','7am','8am','9am','10am','11am',
                             '12pm','1pm','2pm','3pm','4pm','5pm','6pm','7pm','8pm','9pm','10pm','11pm'],
